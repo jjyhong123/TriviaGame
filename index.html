@@ -9,195 +9,29 @@
 </head>
 
 <body>
-    <h1>Trivia Game</h1>
-    <div id="time-remaining">Time remaining: <span id="time">30</span></div>
-    <div id="question">Question will go here</div>
-    <button class="choice" id="A">A</button></div>
-    <button class="choice" id="B">B</button></div>
-    <button class="choice" id="C">C</button></div>
-    <button class="choice" id="D">D</button></div>
-    <button id="start">Start</button>
-    <div id="gif-holder">Gif goes here</div>
+    <div id="container">
 
-    <div id="number-correct">Correct: <span id="correct"></span></div>
-    <div id="number-incorrect"> Incorrect: <span id="incorrect"></span></div>
-    <div id="number-unanswered">Unanswered: <span id="unanswered"></span></div>
+        <h1>Trivia Game</h1>
+        <div id="time-remaining"></div>
+        <br>
+        <div id="question">Question will go here</div>
+        <br>
+        <div class="button choice" id="A"></div>
+        <div class="button choice" id="B"></div>
+        <div class="button choice" id="C"></div>
+        <div class="button choice" id="D"></div>
+        <div class="button" id="start">Start</div>
+        <div id="gif-holder"></div>
+
+        <div id="number-correct"></div>
+        <div id="number-incorrect"></div>
+        <div id="number-unanswered"></div>
+
+    </div>
 
 
 </body>
 
-<script type="text/javascript">
-
-// Set up questions
-var questionBank = [
-
-    {
-        question: "When was I born?",
-        A: {choice: "1999", value: true},
-        B: {choice: "2000", value: false},
-        C: {choice: "2001", value: false},
-        D: {choice: "2002", value: false}    
-    },  
-
-    {
-        question: "Where was I born?",
-        A: {choice: "SJ", value: false},
-        B: {choice: "SF", value: true},
-        C: {choice: "SD", value: false},
-        D: {choice: "SR", value: false}    
-    },
-
-    {
-        question: "How was I born?",
-        A: {choice: "C-section", value: false},
-        B: {choice: "Normal", value: false},
-        C: {choice: "From an egg", value: true},
-        D: {choice: "From ashes", value: false}    
-    },  
-
-    {
-        question: "Why was I born?",
-        A: {choice: "To die for humanity's sins", value: false},
-        B: {choice: "To take over the world", value: false},
-        C: {choice: "To avenge my past-life family's deaths", value: false},
-        D: {choice: "To be useless", value: true}    
-    } 
-
-];
-
-// Initialize variables
-var time=30;
-var intervalId;
-var i=0;
-var numCorrect = 0;
-var numIncorrect = 0;
-var numUnanswered = 0;
-var gameOver = false;
-
-// On start button click, run function 
-$("#start").on("click", run);
-
-function run() { 
-    //Hide start button
-    
-    // Decrement time remaining every second
-    clearInterval(intervalId);
-    intervalId = setInterval(decrement, 1000);
-    
-    // Update HTML
-    $("#question").text(questionBank[i].question);
-    $("#A").text(questionBank[i].A.choice).attr("value",questionBank[i].A.value);
-    $("#B").text(questionBank[i].B.choice).attr("value",questionBank[i].B.value);
-    $("#C").text(questionBank[i].C.choice).attr("value",questionBank[i].C.value);
-    $("#D").text(questionBank[i].D.choice).attr("value",questionBank[i].D.value);
-    $("#time").text(time);
-    
-    // Collect user input
-    $(".choice").on("click", function () {
-        var value = $(this).attr("value");
-        // If answer is correct
-        if (value === "true") {
-            correct();
-        }
-        // Otherwise, answer is incorrect
-        else {
-            incorrect();
-        }
-        
-    });
-
-};
-
-// Defining our functions
-function decrement () {
-    time--;
-    $("#time").text(time);
-    if (time === 0) {
-        timeUp();
-    }
-};
-
-function correct () {
-    // Display correct message and gif for 5 seconds
-    $("#gif-holder").text("Correct");
-    clearInterval(intervalId);
-    // Clear gif-holder
-    setTimeout(function () {
-        $("#gif-holder").text("");  
-        numCorrect++;
-        i++;
-        time = 30;
-        if (i===questionBank.length) {
-            endGame ();
-        }
-        if (gameOver === false) {
-            run();
-        }
-        
-    }, 5000);
-
-};
-
-function incorrect () {
-    // Display incorrect message and gif for 5 seconds
-    $("#gif-holder").text("Incorrect");
-    clearInterval(intervalId);
-    // Clear gif-holder
-    setTimeout(function () {
-        $("#gif-holder").text("");
-        numIncorrect++;
-        i++;
-        time = 30;
-        if (i===questionBank.length) {
-            endGame();
-        }
-        if (gameOver === false) {
-            run();
-        }
-        
-    }, 5000);
-
-};
-
-function timeUp() {
-    //Display time up message and gif for 5 seconds
-    $("#gif-holder").text("Time's up");
-    clearInterval(intervalId);
-    // Clear gif-holder
-    setTimeout(function () {
-        $("#gif-holder").text("");
-        numUnanswered++;
-        i++;
-        time = 30;
-        if (i===questionBank.length) {
-            endGame();
-        }
-        if (gameOver === false) {
-            run();
-        }
-        
-    }, 5000);
-    
-};
-
-function endGame() {
-    // Display numCorrect, numIncorrect, and numUnanswered
-    $("#correct").text(numCorrect);
-    $("#incorrect").text(numIncorrect);
-    $("#unanswered").text(numUnanswered);
-
-    // Reset values
-    numCorrect = 0;
-    numIncorrect = 0;
-    unUnanwered = 0;
-    time = 30;
-    i=0;
-
-    gameOver = true;
-    
-};
-
-
-</script>
+<script src="assets/javascript/app.js"></script>
 
 </html>
