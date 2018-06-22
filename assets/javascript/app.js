@@ -1,52 +1,66 @@
 // Set up questions
 var questionBank = [
 
+    // Question 1
     {
-        question: "When was I born?",
-        A: {choice: "1999", value: true},
-        B: {choice: "2000", value: false},
-        C: {choice: "2001", value: false},
-        D: {choice: "2002", value: false}    
+        question: "In Mario Kart, which power-up shrinks all other players?",
+        A: {choice: "Lightning bolt", value: true},
+        B: {choice: "Bullet bill", value: false},
+        C: {choice: "Magic mushrooms", value: false},
+        D: {choice: "Star", value: false},
+        gif: '<img src="assets/images/mario-kart.gif">'    
     },  
 
+    // Question 2
     {
-        question: "Where was I born?",
-        A: {choice: "SJ", value: false},
-        B: {choice: "SF", value: true},
-        C: {choice: "SD", value: false},
-        D: {choice: "SR", value: false}    
+        question: "Which item confers invincibility?",
+        A: {choice: "Fire flower", value: false},
+        B: {choice: "Star", value: true},
+        C: {choice: "Raccoon leaf", value: false},
+        D: {choice: "One-up", value: false},
+        gif: '<img src="assets/images/mario-star.gif">'    
     },
 
+    // Question 3
     {
-        question: "How was I born?",
-        A: {choice: "C-section", value: false},
-        B: {choice: "Normal", value: false},
-        C: {choice: "From an egg", value: true},
-        D: {choice: "From ashes", value: false}    
+        question: "What is the name of the shelled enemies?",
+        A: {choice: "Goomba", value: false},
+        B: {choice: "Thwomp", value: false},
+        C: {choice: "Koopa", value: true},
+        D: {choice: "Boo", value: false},
+        gif: '<img src="assets/images/mario-koopa.gif">'        
     },  
 
+    // Question 4
     {
-        question: "Why was I born?",
-        A: {choice: "To die for humanity's sins", value: false},
-        B: {choice: "To take over the world", value: false},
-        C: {choice: "To avenge my past-life family's deaths", value: false},
-        D: {choice: "To be useless", value: true}    
+        question: "What is the name of Princess Peach's captor, king of the Koopas?",
+        A: {choice: "Howard", value: false},
+        B: {choice: "Schrader", value: false},
+        C: {choice: "Fraiser", value: false},
+        D: {choice: "Bowser", value: true},    
+        gif: '<img src="assets/images/mario-red-shells.gif">'    
     } 
 
 ];
 
-// Declare variables
-var time;
+// Declare global variables
 var intervalId;
+
+var time;
 var numCorrect;
 var numIncorrect;
 var numUnanswered;
 var i;
 
-// On start button click, run function 
-$("#start").on("click", run);
+// When user clicks on start button, start game
+$("#start").on("click", start);
 
-function run() {
+function start() {
+
+    // Hide number of correct, incorrect, and unanswered questions from previous round
+    $("#number-correct").hide();
+    $("#number-incorrect").hide();
+    $("#number-unanswered").hide();
 
     // Initialize variables
     time = 30;
@@ -55,134 +69,195 @@ function run() {
     numUnanswered = 0;
     i = 0;
 
-    $("#number-correct").text("");
-    $("#number-incorrect").text("");
-    $("#number-unanswered").text("");
-    $("#gif-holder").text("");    
+    // Hide start button
+    $("#start").hide();
 
+    // Show elements that were hidden at the end of the previous round
+    $("#question").show();
+    $("#time-remaining").show();
 
-    // Decrement time by one every second
+    // Run decrement function at one-second intervals
     clearInterval(intervalId);
     intervalId = setInterval(decrement, 1000);
 
-    updateHTML();
+    // Load question
+    loadQuestion();
 };
 
-// Collect user input
-$(".choice").on("click", function () {
-    var value = $(this).attr("value");
-    // If correct, run correct()
-    if (value === "true") {
-        correct();
-    }
-    // Otherwise, run incorrect()
-    else {
-        incorrect();
-    } 
-});
-
+// Decrement time by one
 function decrement () {
     time--;
     $("#time-remaining").text("Time remaining: " + time);
+    // If timer falls to zero, display "time's up" message
     if (time === 0) {
         timesUp();
     }
 };
 
+// When a user clicks on an answer choice
+$(".choice").on("click", function () {
+    // Store answer choice selected by user
+    var value = $(this).attr("value");
+
+    // If answer choice seleced by user is correct, display "correct" message
+    if (value === "true") {
+        correct();
+    }
+    // Otherwise, display "incorrect" message
+    else {
+        incorrect();
+    } 
+});
+
+// Run for a correct answer
 function correct() {
-    // Stop the countdown
+
+    // Stop the timer
     clearInterval(intervalId);
-    // display correct message
-    $("#gif-holder").text("Correct");
-    // update parameters
+
+    // Display "correct" message
+    $("#question").text("Correct!");
+
+    // Hide answer choice buttons
+    hideButtons();
+
+    // Display gif
+    $("#gif-holder").html(questionBank[i].gif);
+
+    // After brief interval, 
     setTimeout(function () {
-        $("#gif-holder").text("");  
+
+        // Clear gif
+        $("#gif-holder").text("");
+        
+        // Update parameters
         numCorrect++;
         i++;
         time = 30;
 
-        // Check if we're out of questions
+        // As long as there are questions left to ask,
         if (i < questionBank.length) {
-            updateHTML();
-            intervalId = setInterval(decrement, 1000);
+            loadQuestion();
+            intervalId = setInterval(decrement, 1000); // Restart the timer
+
+        // Otherwise, end the game
         }
         else {
             endGame();
         }
 
-    }, 2000);
+    }, 4000);
 
 };
 
+// Run for an incorrect answer
 function incorrect() {
-    // Stop the countdown
+    
+    // Stop the timer
     clearInterval(intervalId);
-    // display incorrect message
-    $("#gif-holder").text("Incorrect");
-    // update parameters
+    
+    // Display "incorrect" message
+    $("#question").text("Nope!");
+    
+    // Hide answer choice buttons
+    hideButtons();
+
+    // Display gif
+    $("#gif-holder").html(questionBank[i].gif);
+    
+    // After brief interval,
     setTimeout(function () {
+
+        // Clear gif
         $("#gif-holder").text("");  
+
+        // Update parameters
         numIncorrect++;
         i++;
         time = 30;
 
-        // Check if we're out of questions
+        // As long as there are questions left to ask,
         if (i < questionBank.length) {
-            updateHTML();
-            intervalId = setInterval(decrement, 1000);
+            loadQuestion();
+            intervalId = setInterval(decrement, 1000); // Restart the timer
         }
+
+        // Otherwise, end the game
         else {
             endGame();
         }
-    }, 2000);
+    }, 4000);
 };
 
+// Run if user runs out of time
 function timesUp() {
-    // Stop the countdown
+
+    // Stop the timer
     clearInterval(intervalId);
-    // display times up message
-    $("#gif-holder").text("Time's up");
-    // update parameters
+
+    // Display "time's up" message
+    $("#question").text("Time's up!");
+
+    // Hide answer choices
+    hideButtons();
+
+    // Display gif
+    $("#gif-holder").html(questionBank[i].gif);
+
+    // After brief interval, 
     setTimeout(function () {
-        $("#gif-holder").text("");  
+        
+        // Clear gif
+        $("#gif-holder").text(""); 
+        
+        // Update parameters
         numUnanswered++;
         i++;
         time = 30;
 
-        // Check if we're out of questions
+        // As long as there are questions left to ask,
         if (i < questionBank.length) {
-            updateHTML();
-            intervalId = setInterval(decrement, 1000);
+            loadQuestion();
+            intervalId = setInterval(decrement, 1000); // Restart the timer
         }
+
+        // Otherwise, end the game
         else {
             endGame();
         }
-    }, 2000);
+    }, 4000);
 };
 
-function updateHTML() {
-    $("#question").text(questionBank[i].question);
-    $("#A").text(questionBank[i].A.choice).attr("value",questionBank[i].A.value);
-    $("#B").text(questionBank[i].B.choice).attr("value",questionBank[i].B.value);
-    $("#C").text(questionBank[i].C.choice).attr("value",questionBank[i].C.value);
-    $("#D").text(questionBank[i].D.choice).attr("value",questionBank[i].D.value);
+function loadQuestion() {
+
     $("#time-remaining").text("Time remaining: " + time);
-    $("#start").text("");
+
+    $("#question").text(questionBank[i].question);
+
+    $("#A").text(questionBank[i].A.choice).attr("value",questionBank[i].A.value).show();
+    $("#B").text(questionBank[i].B.choice).attr("value",questionBank[i].B.value).show();
+    $("#C").text(questionBank[i].C.choice).attr("value",questionBank[i].C.value).show();
+    $("#D").text(questionBank[i].D.choice).attr("value",questionBank[i].D.value).show();
+
 };
 
 function endGame() {
-    // Display numCorrect, numIncorrect, and numUnanswered
-    $("#number-correct").text("Correct: " + numCorrect);
-    $("#number-incorrect").text("Incorrect: " + numIncorrect);
-    $("#number-unanswered").text("Unanswered: " + numUnanswered);
-    $("#gif-holder").text("");    
 
-    $("#question").text("");
-    $("#A").text("");
-    $("#B").text("");
-    $("#C").text("");
-    $("#D").text("");
-    $("#time-remaining").text("");
-    $("#start").text("Restart?");
-    
+    // Display numCorrect, numIncorrect, and numUnanswered
+    $("#number-correct").text("Correct: " + numCorrect).show();
+    $("#number-incorrect").text("Incorrect: " + numIncorrect).show();
+    $("#number-unanswered").text("Unanswered: " + numUnanswered).show();
+
+    $("#question").hide();
+    $("#time-remaining").hide();
+    hideButtons();
+
+    $("#start").text("Restart?").show();
 };
+
+function hideButtons() {
+    $("#A").hide();
+    $("#B").hide();
+    $("#C").hide();
+    $("#D").hide();
+}
